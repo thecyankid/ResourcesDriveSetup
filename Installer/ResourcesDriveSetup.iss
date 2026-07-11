@@ -62,3 +62,26 @@ Flags: runhidden waituntilterminated
 Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; \
 Parameters: "-ExecutionPolicy Bypass -File ""{app}\Scripts\Uninstall.ps1"""; \
 Flags: runhidden waituntilterminated
+
+function InitializeSetup(): Boolean;
+var
+  ResultCode: Integer;
+begin
+  Result := True;
+
+  if RegKeyExists(HKEY_LOCAL_MACHINE,
+    'Software\Microsoft\Windows\CurrentVersion\Uninstall\{#emit SetupSetting("AppId")}_is1') then
+  begin
+    if MsgBox(
+      'Resources Drive Setup is already installed.' + #13#10 +
+      'Would you like to uninstall it before continuing?',
+      mbConfirmation, MB_YESNO) = IDYES then
+    begin
+      Exec(ExpandConstant('{app}\unins000.exe'), '', '', SW_SHOW,
+        ewWaitUntilTerminated, ResultCode);
+      Result := False;
+    end
+    else
+      Result := False;
+  end;
+end;

@@ -15,6 +15,9 @@ AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 
+Uninstallable=yes
+CreateUninstallRegKey=yes
+
 VersionInfoVersion=1.0.0
 VersionInfoCompany=DBC Computer Lab
 VersionInfoDescription=Resources Drive Setup

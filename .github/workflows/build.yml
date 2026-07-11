@@ -7,14 +7,25 @@ on:
       - main
 
 jobs:
-  test:
+  build:
+
     runs-on: windows-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
 
-      - name: Verify Repository
+      - uses: actions/checkout@v4
+
+      - name: Install Inno Setup
+        run: choco install innosetup -y
+
+      - name: Compile Installer
         run: |
-          echo Repository checked out successfully.
-          dir
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" Installer\ResourcesDriveSetup.iss
+
+        shell: powershell
+
+      - name: Upload Installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: ResourcesDriveSetup
+          path: Installer/Output/ResourcesDriveSetup.exe

@@ -15,31 +15,30 @@ AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 
-Uninstallable=yes
-CreateUninstallRegKey=yes
-
-VersionInfoVersion=1.0.0
-VersionInfoCompany=DBC Computer Lab
-VersionInfoDescription=Resources Drive Setup
-VersionInfoCopyright=DBC Computer Lab
+AppPublisherURL=https://github.com/thecyankid/ResourcesDriveSetup
+AppSupportURL=https://github.com/thecyankid/ResourcesDriveSetup
+AppUpdatesURL=https://github.com/thecyankid/ResourcesDriveSetup/releases
 
 DefaultDirName={autopf}\Resources Drive Setup
 DefaultGroupName=Resources Drive Setup
 
-PrivilegesRequired=admin
+CreateUninstallRegKey=yes
+Uninstallable=yes
 
-OutputDir=Output
-OutputBaseFilename=ResourcesDriveSetup
+PrivilegesRequired=admin
 
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
 
-UninstallDisplayIcon={app}\Scripts\Install.ps1
-
-DisableProgramGroupPage=yes
 ArchitecturesInstallIn64BitMode=x64
+
+OutputDir=Output
+OutputBaseFilename=ResourcesDriveSetup
+
 SetupLogging=yes
+
+SetupIconFile=Setup.ico
 
 [Files]
 

@@ -9,6 +9,12 @@
 #define MyAppExeName "Install.ps1"
 
 [Setup]
+
+AppId={{C5A8A26E-1B7E-4E51-9D46-0F8D3E22B101}
+AppName={#MyAppName}
+AppVersion={#MyAppVersion}
+AppPublisher={#MyAppPublisher}
+
 VersionInfoVersion=1.0.0
 VersionInfoCompany=DBC Computer Lab
 VersionInfoDescription=Resources Drive Setup
@@ -26,12 +32,10 @@ Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
 
-UninstallDisplayIcon={app}\Install.ps1
+UninstallDisplayIcon={app}\Scripts\Install.ps1
 
 DisableProgramGroupPage=yes
-
 ArchitecturesInstallIn64BitMode=x64
-
 SetupLogging=yes
 
 [Files]

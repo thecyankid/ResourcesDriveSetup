@@ -28,4 +28,41 @@ powershell.exe `
 
 Write-Host "Installation Complete."
 
+$TaskName = $config.taskName
+
+$Action = New-ScheduledTaskAction `
+    -Execute "powershell.exe" `
+    -Argument "-ExecutionPolicy Bypass -File `"$PSScriptRoot\MapDrive.ps1`""
+
+$Trigger = New-ScheduledTaskTrigger -AtLogOn
+
+Register-ScheduledTask `
+    -TaskName $TaskName `
+    -Action $Action `
+    -Trigger $Trigger `
+    -RunLevel Highest `
+    -Force | Out-Null
+
+Write-Host "Scheduled Task created."
+
+# ==========================================================
+# Apply Windows System Settings
+# ==========================================================
+
+Write-Host ""
+Write-Host "Applying Windows configuration..."
+
+$SystemSettings = Join-Path $PSScriptRoot "SystemSettings.ps1"
+
+if (Test-Path $SystemSettings)
+{
+    & powershell.exe `
+        -ExecutionPolicy Bypass `
+        -File $SystemSettings
+}
+else
+{
+    Write-Warning "SystemSettings.ps1 not found."
+}
+
 exit 0

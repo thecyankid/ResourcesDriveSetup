@@ -52,4 +52,51 @@ if (Test-Path $LogPath)
 
 Write-Host "Uninstall complete."
 
+# ==========================================================
+# Restore Windows System Settings
+# ==========================================================
+
+Write-Host ""
+Write-Host "Restoring Windows configuration..."
+
+# ----------------------------------------------------------
+# Restore Balanced Power Plan
+# ----------------------------------------------------------
+
+powercfg /setactive SCHEME_BALANCED
+
+# ----------------------------------------------------------
+# Restore Power Defaults
+# ----------------------------------------------------------
+
+powercfg /change monitor-timeout-ac 10
+powercfg /change monitor-timeout-dc 5
+
+powercfg /change standby-timeout-ac 30
+powercfg /change standby-timeout-dc 15
+
+powercfg /change hibernate-timeout-ac 180
+powercfg /change hibernate-timeout-dc 180
+
+# ----------------------------------------------------------
+# Enable Wallpaper Changes
+# ----------------------------------------------------------
+
+Remove-ItemProperty `
+    -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\ActiveDesktop" `
+    -Name "NoChangingWallPaper" `
+    -ErrorAction SilentlyContinue
+
+# ----------------------------------------------------------
+# Enable Lock Screen Changes
+# ----------------------------------------------------------
+
+Remove-ItemProperty `
+    -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" `
+    -Name "NoChangingLockScreen" `
+    -ErrorAction SilentlyContinue
+
+Write-Host ""
+Write-Host "Windows configuration restored."
+
 exit 0

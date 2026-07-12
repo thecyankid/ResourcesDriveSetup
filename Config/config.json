@@ -1,11 +1,26 @@
 {
   "appName": "Resources Drive Setup",
   "company": "DBC Computer Lab",
-  "version": "1.0.0",
+  "version": "1.2.0",
+
   "server": "DBC-00",
   "share": "Resources",
   "driveLetter": "R",
+
   "taskName": "Resources Drive Mapper",
+
   "logPath": "C:\\ProgramData\\ResourcesDriveSetup\\Logs",
-  "installPath": "C:\\Program Files\\Resources Drive Setup"
+  "installPath": "C:\\Program Files\\Resources Drive Setup",
+
+  "power": {
+    "enableHighPerformance": true,
+    "monitorTimeout": 0,
+    "sleepTimeout": 0,
+    "hibernateTimeout": 0
+  },
+
+  "restrictions": {
+    "disableWallpaper": true,
+    "disableLockScreen": true
+  }
 }

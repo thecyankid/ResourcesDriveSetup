@@ -1,6 +1,8 @@
 # Resources Drive Setup
 # Install.ps1
 
+$ErrorActionPreference = "Stop"
+
 $ConfigPath = "$PSScriptRoot\..\Config\config.json"
 
 if (!(Test-Path $ConfigPath))
@@ -9,7 +11,7 @@ if (!(Test-Path $ConfigPath))
     exit 1
 }
 
-$config = Get-Content $ConfigPath | ConvertFrom-Json
+$config = Get-Content -Path $ConfigPath -Raw | ConvertFrom-Json
 
 # Create log folder
 if (!(Test-Path $config.logPath))
@@ -20,13 +22,19 @@ if (!(Test-Path $config.logPath))
         -Path $config.logPath | Out-Null
 }
 
-Write-Host "Running drive mapping..."
+Write-Host "Mapping network drive..."
 
-powershell.exe `
+& powershell.exe `
     -ExecutionPolicy Bypass `
     -File "$PSScriptRoot\MapDrive.ps1"
 
-Write-Host "Installation Complete."
+if ($LASTEXITCODE -ne 0)
+{
+    Write-Error "Drive mapping failed. Installation aborted."
+    exit $LASTEXITCODE
+}
+
+Write-Host "Network drive mapped successfully."
 
 $TaskName = $config.taskName
 
@@ -43,14 +51,14 @@ Register-ScheduledTask `
     -RunLevel Highest `
     -Force | Out-Null
 
-Write-Host "Scheduled Task created."
+Write-Host "Scheduled Task created successfully."
 
 # ==========================================================
 # Apply Windows System Settings
 # ==========================================================
 
 Write-Host ""
-Write-Host "Applying Windows configuration..."
+Write-Host "Applying system configuration..."
 
 $SystemSettings = Join-Path $PSScriptRoot "SystemSettings.ps1"
 
@@ -59,10 +67,20 @@ if (Test-Path $SystemSettings)
     & powershell.exe `
         -ExecutionPolicy Bypass `
         -File $SystemSettings
+
+   if ($LASTEXITCODE -ne 0)
+{
+    Write-Error "System configuration failed."
+    exit $LASTEXITCODE
+}     
 }
 else
 {
     Write-Warning "SystemSettings.ps1 not found."
 }
+
+Write-Host ""
+Write-Host "Resources Drive Setup completed successfully."
+Write-Host ""
 
 exit 0

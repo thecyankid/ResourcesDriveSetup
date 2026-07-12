@@ -1,7 +1,17 @@
 # Resources Drive Setup
 # Maps R: to \\DBC-00\Resources
 
-$config = Get-Content "$PSScriptRoot\..\Config\config.json" | ConvertFrom-Json
+$ErrorActionPreference = "Stop"
+
+$ConfigPath = "$PSScriptRoot\..\Config\config.json"
+
+if (!(Test-Path $ConfigPath))
+{
+    Write-Host "Configuration file not found."
+    exit 1
+}
+
+$config = Get-Content -Path $ConfigPath -Raw | ConvertFrom-Json
 
 $Drive  = $config.driveLetter
 $Server = $config.server
@@ -12,7 +22,8 @@ $Target = "\\$Server\$Share"
 # Wait up to 30 seconds for the server
 $connected = $false
 
-for ($i = 0; $i -lt 10; $i++) {
+for ($i = 0; $i -lt 10; $i++)
+{
     if (Test-Connection -ComputerName $Server -Quiet -Count 1) {
         $connected = $true
         break
@@ -25,10 +36,12 @@ if (-not $connected) {
     exit 1
 }
 
-$current = Get-CimInstance Win32_LogicalDisk |
-           Where-Object DeviceID -eq "$Drive:"
+$current = Get-CimInstance `
+    -ClassName Win32_LogicalDisk `
+    -Filter "DeviceID='$Drive:'"
 
-if ($current) {
+if ($current) 
+{
 
     if ($current.ProviderName -eq $Target) {
         Write-Host "Drive already mapped."
@@ -43,8 +56,13 @@ New-PSDrive `
     -Name $Drive `
     -PSProvider FileSystem `
     -Root $Target `
-    -Persist
+    -Persist | Out-Null
 
-Write-Host "Drive mapped successfully."
+if (Get-PSDrive -Name $Drive -ErrorAction SilentlyContinue)
+{
+    Write-Host "Drive mapped successfully."
+    exit 0
+}
 
-exit 0
+Write-Error "Drive mapping failed."
+exit 3

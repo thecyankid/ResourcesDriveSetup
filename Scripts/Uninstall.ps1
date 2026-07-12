@@ -3,6 +3,8 @@
 # Uninstall.ps1
 # ============================================
 
+$ErrorActionPreference = "Stop"
+
 $ConfigPath = "$PSScriptRoot\..\Config\config.json"
 
 if (!(Test-Path $ConfigPath))
@@ -11,7 +13,7 @@ if (!(Test-Path $ConfigPath))
     exit 1
 }
 
-$config = Get-Content $ConfigPath | ConvertFrom-Json
+$config = Get-Content -Path $ConfigPath -Raw | ConvertFrom-Json
 
 $Drive = $config.driveLetter
 $Server = $config.server
@@ -23,8 +25,9 @@ $Target = "\\$Server\$Share"
 
 Write-Host "Checking mapped drive..."
 
-$current = Get-CimInstance Win32_LogicalDisk |
-    Where-Object {$_.DeviceID -eq "$Drive:"}
+$current = Get-CimInstance `
+    -ClassName Win32_LogicalDisk `
+    -Filter "DeviceID='$Drive:'"
 
 if ($current)
 {
@@ -57,26 +60,26 @@ Write-Host "Uninstall complete."
 # ==========================================================
 
 Write-Host ""
-Write-Host "Restoring Windows configuration..."
+Write-Host "Restoring system configuration..."
 
 # ----------------------------------------------------------
 # Restore Balanced Power Plan
 # ----------------------------------------------------------
 
-powercfg /setactive SCHEME_BALANCED
+powercfg.exe /setactive SCHEME_BALANCED
 
 # ----------------------------------------------------------
 # Restore Power Defaults
 # ----------------------------------------------------------
 
-powercfg /change monitor-timeout-ac 10
-powercfg /change monitor-timeout-dc 5
+powercfg.exe /change monitor-timeout-ac 10
+powercfg.exe /change monitor-timeout-dc 5
 
-powercfg /change standby-timeout-ac 30
-powercfg /change standby-timeout-dc 15
+powercfg.exe /change standby-timeout-ac 30
+powercfg.exe /change standby-timeout-dc 15
 
-powercfg /change hibernate-timeout-ac 180
-powercfg /change hibernate-timeout-dc 180
+powercfg.exe /change hibernate-timeout-ac 180
+powercfg.exe /change hibernate-timeout-dc 180
 
 # ----------------------------------------------------------
 # Enable Wallpaper Changes
@@ -97,6 +100,8 @@ Remove-ItemProperty `
     -ErrorAction SilentlyContinue
 
 Write-Host ""
-Write-Host "Windows configuration restored."
+Write-Host "System configuration restored."
+Write-Host ""
+Write-Host "Resources Drive Setup removed successfully."
 
 exit 0
